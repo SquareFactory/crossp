@@ -1,0 +1,90 @@
+name: Publish on NPM registry
+on:
+  push:
+    branches: [main]
+    tags: ['**']
+    paths-ignore: ['*.md']
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  format:
+    name: Check format with Prettier
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-16-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-16
+      - name: Install NPM dependencies
+        run: npm install
+      - name: Run Prettier
+        run: npm run format:check
+  test:
+    name: Test with Jest
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        node: [10, 11, 12, 13, 14, 15, 16]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ matrix.node }}
+      - name: Install NPM dependencies
+        run: npm install
+      - name: Run Jest with coverage
+        run: npm run test:cov
+      - name: Upload coverage reports to Codecov
+        if: matrix.node == '16' # Only upload coverage reports when using latest Node version
+        uses: codecov/codecov-action@v1
+        with:
+          files: ./coverage/lcov.info
+          verbose: true
+  publish:
+    name: Publish to GitHub registry
+    needs: [format, test]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Ensure tag validity
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          if [ $(jq -r .version package.json) != ${GITHUB_REF/refs\/tags\//} ]; then
+            echo "Error: $GITHUB_REF does not match package.json version"
+            exit 1
+          fi
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-16-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-16
+      - name: Install NPM dependencies
+        run: npm install
+      - name: Publish new release
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          dry-run: ${{ !startsWith(github.ref , 'refs/tags/') }}
+          access: public

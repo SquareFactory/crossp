@@ -1,0 +1,56 @@
+{
+  "name": "@csquare/crossp-compiler",
+  "version": "0.1.0",
+  "description": "Generate commands from a single one using csquare syntax.",
+  "keywords": [
+    "csquare",
+    "compiler",
+    "crossp",
+    "command"
+  ],
+  "homepage": "https://github.com/csquare-ai/crossp-compiler#readme",
+  "bugs": {
+    "email": "mathieu@csquare.ai",
+    "url": "https://github.com/owner/csquare-ai/issues"
+  },
+  "license": "MIT",
+  "author": "Clarisse Tarrou <clarisse@csquare.ai> (https://github.com/ArcticSubmarine)",
+  "contributors": [
+    "Mathieu Bour <mathieu@csquare.ai> (https://github.com/mathieu-bour)"
+  ],
+  "files": [
+    "dist/**"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "typings": "dist/typings/index.d.ts",
+  "repository": "github:csquare-ai/crossp-compiler",
+  "scripts": {
+    "prepare": "npx is-ci || husky install",
+    "format": "prettier --write **/*.{ts,tsx,json,yaml,yml,md}",
+    "format:check": "prettier --check **/*.{ts,tsx,yaml,yml,md}",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "build": "run-p build:*",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json"
+  },
+  "devDependencies": {
+    "@csquare/prettier-config": "^1.1.2",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.12.2",
+    "husky": "^6.0.0",
+    "is-ci": "^3.0.0",
+    "jest": "^27.0.4",
+    "lint-staged": "^11.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.3.1",
+    "standard-commit": "^4.2.4",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.2"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "prettier": "@csquare/prettier-config"
+}
