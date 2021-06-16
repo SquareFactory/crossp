@@ -1,5 +1,5 @@
 {
-  "name": "@csquare/crossp-compiler",
+  "name": "@csquare/crossp",
   "version": "0.1.0",
   "description": "Generate commands from a single one using csquare syntax.",
   "keywords": [
@@ -8,7 +8,7 @@
     "crossp",
     "command"
   ],
-  "homepage": "https://github.com/csquare-ai/crossp-compiler#readme",
+  "homepage": "https://github.com/csquare-ai/crossp#readme",
   "bugs": {
     "email": "mathieu@csquare.ai",
     "url": "https://github.com/owner/csquare-ai/issues"
@@ -24,7 +24,7 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "typings": "dist/typings/index.d.ts",
-  "repository": "github:csquare-ai/crossp-compiler",
+  "repository": "github:csquare-ai/crossp",
   "scripts": {
     "prepare": "npx is-ci || husky install",
     "format": "prettier --write **/*.{ts,tsx,json,yaml,yml,md}",

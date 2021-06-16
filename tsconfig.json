@@ -4,7 +4,8 @@
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["es2019.array"]
   },
   "files": ["src/index.ts"],
   "exclude": ["node_modules"]
