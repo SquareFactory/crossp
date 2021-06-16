@@ -112,4 +112,17 @@ describe('compiler', () => {
       `Range operator exceeds the maximum allowed domain of ${limits.range} values`,
     ],
   ])('should not compile %p and be rate limited', expectToThrow);
+
+  /**
+   * @link https://github.com/csquare-ai/crossp/issues/1
+   */
+  it('should not have round issues', () => {
+    expectToEqual('python --train.py --lr=%(0.1,0.5,0.1)%', [
+      'python --train.py --lr=0.1',
+      'python --train.py --lr=0.2',
+      'python --train.py --lr=0.3', // "python --train.py --lr=0.30000000000000004"
+      'python --train.py --lr=0.4',
+      'python --train.py --lr=0.5',
+    ]);
+  });
 });
