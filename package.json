@@ -1,6 +1,6 @@
 {
   "name": "@csquare/crossp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate commands from a single one using csquare syntax.",
   "keywords": [
     "csquare",
@@ -28,6 +28,7 @@
   "repository": "github:csquare-ai/crossp",
   "scripts": {
     "prepare": "npx is-ci || husky install",
+    "prepublishOnly": "npm run build",
     "format": "prettier --write **/*.{ts,tsx,json,yaml,yml,md}",
     "format:check": "prettier --check **/*.{ts,tsx,yaml,yml,md}",
     "test": "jest",
