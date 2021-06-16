@@ -83,7 +83,39 @@ describe('compiler', () => {
     ['python train.py --epochs=%(10,15,2', 'Unterminated statement'],
     ['python train.py --epochs=%[]%', 'Empty comma-separated list'],
     ['python train.py --epochs=%(10,%[1,2,3]%,2)%', 'Nested statements'],
+    ['python train.py --epochs=%(in,out,1)%', 'Non numeric range parameters'],
   ])('should throw a syntax error for %p', (command, message) => {
     expect(() => compiler(command)).toThrowError(message);
+  });
+
+  it.each([
+    [
+      'python train.py -e %[1,2]% -lr %[0.1,0.2]% -o %[in,out]%.txt',
+      [
+        'python train.py -e 1 -lr 0.1 -o in.txt',
+        'python train.py -e 1 -lr 0.1 -o out.txt',
+        'python train.py -e 1 -lr 0.2 -o in.txt',
+        'python train.py -e 1 -lr 0.2 -o out.txt',
+        'python train.py -e 2 -lr 0.1 -o in.txt',
+        'python train.py -e 2 -lr 0.1 -o out.txt',
+        'python train.py -e 2 -lr 0.2 -o in.txt',
+        'python train.py -e 2 -lr 0.2 -o out.txt',
+      ],
+    ],
+    [
+      'python train.py -e %(1,2)% -lr %(0.1,0.2)% -o %[in,out]%.txt',
+      [
+        'python train.py -e 1 -lr 0.1 -o in.txt',
+        'python train.py -e 1 -lr 0.1 -o out.txt',
+        'python train.py -e 1 -lr 0.2 -o in.txt',
+        'python train.py -e 1 -lr 0.2 -o out.txt',
+        'python train.py -e 2 -lr 0.1 -o in.txt',
+        'python train.py -e 2 -lr 0.1 -o out.txt',
+        'python train.py -e 2 -lr 0.2 -o in.txt',
+        'python train.py -e 2 -lr 0.2 -o out.txt',
+      ],
+    ],
+  ])('should compile %p using multi-statements', (command, compiled) => {
+    expect(compiler(command)).toStrictEqual(compiled.sort());
   });
 });
