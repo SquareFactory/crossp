@@ -5,7 +5,7 @@ import { ListToken } from './tokens/list-token';
 import { RangeToken } from './tokens/range-token';
 import { Token } from './tokens/token';
 
-export default function crossp(command: string): string[] {
+export function crossp(command: string): string[] {
   if (command.length > limits.length) {
     throw new RangeError(`Command exceeds the maximum allowed length of ${limits.length} characters`);
   }
@@ -44,3 +44,5 @@ export default function crossp(command: string): string[] {
 
   return result.sort();
 }
+
+export default crossp;
