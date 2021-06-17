@@ -32,11 +32,12 @@ export function crossp(command: string): string[] {
   }
 
   const replacements = cartesian(...tokens.map((t) => t.values));
+  const truncRegex = /(?!\d*\..)0{2}\d*/g;
   const result: string[] = replacements.map((line) => {
     let acc = work;
 
     line.forEach((value, index) => {
-      acc = acc.replace(placeholder(index), value);
+      acc = acc.replace(placeholder(index), value.replace(truncRegex, ''));
     });
 
     return acc;

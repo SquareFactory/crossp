@@ -38,7 +38,6 @@ describe('compiler', () => {
     ['python train.py --epochs=%(10,20,99)%', ['python train.py --epochs=10']],
   ])('should compile %p using ranges', expectToEqual);
 
-  //OK
   it.each([
     [
       'python train.py --lr=%(0.01,0.10,0.03)%',
@@ -51,7 +50,6 @@ describe('compiler', () => {
     ],
   ])('should compile %p using decimal ranges', expectToEqual);
 
-  //OK
   it.each([
     [
       'python train.py --epochs=%(10,12)%',
