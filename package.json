@@ -1,6 +1,6 @@
 {
   "name": "@csquare/crossp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Generate commands from a single one using csquare syntax.",
   "keywords": [
     "csquare",
@@ -24,7 +24,7 @@
   "main": "dist/cjs/index.js",
   "browser": "dist/csj/index.js",
   "module": "dist/esm/index.js",
-  "typings": "dist/typings/index.d.ts",
+  "typings": "dist/types/index.d.ts",
   "repository": "github:csquare-ai/crossp",
   "scripts": {
     "prepare": "npx is-ci || husky install",
