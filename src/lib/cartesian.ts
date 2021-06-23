@@ -1,16 +1,18 @@
+import { limits } from '../limits';
+
 /**
  * @see https://stackoverflow.com/a/43053803/3728261
  */
-import { limits } from '../limits';
-
 export default function cartesian(...values: string[][]): string[][] {
   // @ts-ignore
   let out: string[][] = values.reduce((matrix: string[][], current: string[]) => {
-    if (matrix.length > limits.outputs) {
+    const result = matrix.flatMap((d: string | string[]) => current.map((e: string) => [d, e].flat()));
+
+    if (result.length > limits.outputs) {
       throw new RangeError(`Command exceeds the maximum of ${limits.outputs} outputs`);
     }
 
-    return matrix.flatMap((d: string | string[]) => current.map((e: string) => [d, e].flat()));
+    return result;
   });
 
   if (out?.[0] && typeof out[0] === 'string') {

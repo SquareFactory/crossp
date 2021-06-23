@@ -1,11 +1,12 @@
+import BigNumber from 'bignumber.js';
 import { limits } from '../limits';
 import { Token } from './token';
 
 export class RangeToken implements Token {
   private readonly FLOAT_REGEX = /[+-]?(?:\d*[.])?\d+/;
-  readonly start: number;
-  readonly end: number;
-  readonly increment: number;
+  readonly start: BigNumber;
+  readonly end: BigNumber;
+  readonly increment: BigNumber;
   readonly values: string[] = [];
 
   constructor(readonly raw: string) {
@@ -23,27 +24,27 @@ export class RangeToken implements Token {
       throw new SyntaxError('Non numeric range parameters');
     }
 
-    this.start = parseFloat(parts[0]);
-    this.end = parseFloat(parts[1]);
-    this.increment = Math.abs(parts?.[2] && parts[2].length > 0 ? parseFloat(parts[2]) : 1);
+    this.start = new BigNumber(parts[0]);
+    this.end = new BigNumber(parts[1]);
+    this.increment = parts?.[2] && parts[2].length > 0 ? new BigNumber(parts[2]).abs() : new BigNumber(1);
 
-    if (this.increment === 0) {
+    if (this.increment.eq(0)) {
       throw new RangeError('Increment cannot be equal to zero');
     }
 
-    if (this.start > this.end) {
+    if (this.start.gt(this.end)) {
       [this.start, this.end] = [this.end, this.start];
     }
 
-    if ((this.end - this.start) / this.increment > limits.range) {
+    if (this.end.minus(this.start).div(this.increment).gt(limits.range)) {
       throw new RangeError(`Range operator exceeds the maximum allowed domain of ${limits.range} values`);
     }
 
-    let current = this.start;
+    let current = new BigNumber(this.start);
 
-    while (current <= this.end) {
+    while (current.lte(this.end)) {
       this.values.push(current.toString(10));
-      current += this.increment;
+      current = current.plus(this.increment);
     }
   }
 }

@@ -93,34 +93,71 @@ describe('compiler', () => {
     ],
   ])('should compile %p using multi-statements', expectToEqual);
 
-  it.each([
-    ['python train.py --epochs=%[]%', 'Empty comma-separated list'],
-    ['python train.py --epochs=%(10,%[1,2,3]%,2)%', 'Invalid number of arguments for range'],
-    ['python train.py --epochs=%(in,out,1)%', 'Non numeric range parameters'],
-    ['python train.py --epochs=%(1,10,0)%', 'Increment cannot be equal to zero'],
-  ])('should throw a syntax error for %p', expectToThrow);
+  it('should throw if there is an empty comma-separated list', () => {
+    expectToThrow('python train.py --epochs=%[]%', 'Empty comma-separated list');
+  });
 
-  it.each([
-    [
+  it('should throw if there is invalid arguments for the range operator', () => {
+    expectToThrow('python train.py --epochs=%(10,%[1,2,3]%,2)%', 'Invalid number of arguments for range');
+  });
+
+  it('should throw if the range operator get non-numeric operators', () => {
+    expectToThrow('python train.py --epochs=%(in,out,1)%', 'Non numeric range parameters');
+  });
+
+  it('should throw if the range operator is equal to zero', () => {
+    expectToThrow('python train.py --epochs=%(1,10,0)%', 'Increment cannot be equal to zero');
+  });
+
+  it(`should throw if a range operator exceeds the maximum allowed domain of ${limits.range} values`, () => {
+    expectToThrow(
+      'python train.py --foo=%(0,1,0.0000001)%',
+      `Range operator exceeds the maximum allowed domain of ${limits.range} values`,
+    );
+  });
+
+  it(`should throw if the command generate more than the allowed limit of ${limits.outputs} outputs`, () => {
+    expectToThrow(
+      'python train.py --foo=%(0,100)% --bar=%(0,100)% --baz%(0,100)%',
+      `Command exceeds the maximum of ${limits.outputs} outputs`,
+    );
+  });
+
+  it(`should throw if the command exceeds the maximum allowed length of ${limits.length} characters`, () => {
+    expectToThrow(
       `python train.py ${new Array(limits.length * 2).join('#')}`,
       `Command exceeds the maximum allowed length of ${limits.length} characters`,
-    ],
-    [
-      'python train.py --foo=%(0,1,0.000001)%',
-      `Range operator exceeds the maximum allowed domain of ${limits.range} values`,
-    ],
-  ])('should not compile %p and be rate limited', expectToThrow);
+    );
+  });
 
   /**
    * @link https://github.com/csquare-ai/crossp/issues/1
    */
-  it('should not have round issues', () => {
+  it('should not have rounding issues with %(0.1,0.5,0.1)%', () => {
     expectToEqual('python --train.py --lr=%(0.1,0.5,0.1)%', [
       'python --train.py --lr=0.1',
       'python --train.py --lr=0.2',
       'python --train.py --lr=0.3', // "python --train.py --lr=0.30000000000000004"
       'python --train.py --lr=0.4',
       'python --train.py --lr=0.5',
+    ]);
+  });
+
+  /**
+   * @link https://github.com/csquare-ai/crossp/issues/3
+   */
+  it('should not have rounding issues with %(10,100,10)%', () => {
+    expectToEqual('python --train.py --lr=%(10,100,10)%', [
+      'python --train.py --lr=10',
+      'python --train.py --lr=20',
+      'python --train.py --lr=30',
+      'python --train.py --lr=40',
+      'python --train.py --lr=50',
+      'python --train.py --lr=60',
+      'python --train.py --lr=70',
+      'python --train.py --lr=80',
+      'python --train.py --lr=90',
+      'python --train.py --lr=100',
     ]);
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@csquare/crossp",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Generate commands from a single one using csquare syntax.",
   "keywords": [
     "csquare",
@@ -53,5 +53,8 @@
   "engines": {
     "node": ">=10"
   },
-  "prettier": "@csquare/prettier-config"
+  "prettier": "@csquare/prettier-config",
+  "dependencies": {
+    "bignumber.js": "^9.0.1"
+  }
 }
